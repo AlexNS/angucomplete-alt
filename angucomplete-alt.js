@@ -2,7 +2,7 @@
  * angucomplete-alt
  * Autocomplete directive for AngularJS
  * This is a re-fork of Hidenari Nozaki (https://github.com/ghiden) with some extra features.
- * Which adds the apply on Enter callback. 
+ * Which adds the apply on Enter callback.
  * This is a fork of Daryl Rowland's angucomplete with some extra features.
  * By Hidenari Nozaki
  */
@@ -241,8 +241,7 @@
           if (which === KEY_UP || which === KEY_EN) {
             event.preventDefault();
             if (which === KEY_EN){
-              if (typeof (scope.enterApplyCallback) === 'function'
-                  && scope.selectedObject != null){
+              if (typeof (scope.enterApplyCallback) === 'function' && scope.selectedObject !== null){
                 scope.enterApplyCallback(scope.selectedObject);
               }
             }

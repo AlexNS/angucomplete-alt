@@ -1255,7 +1255,6 @@ describe('angucomplete-alt', function() {
       inputField.trigger(eKeyup);
       $timeout.flush();
 
-      var eKeydown = $.Event('keydown');
       eKeydown.which = KEY_DW;
       inputField.trigger(eKeydown);
       expect(element.isolateScope().currentIndex).toBe(0);
@@ -1266,7 +1265,6 @@ describe('angucomplete-alt', function() {
 
       expect($scope.countrySelected).not.toBe(null);
 
-      var eKeydown = $.Event('keydown');
       eKeydown.which = KEY_EN;
       inputField.trigger(eKeydown);
 
@@ -1299,12 +1297,10 @@ describe('angucomplete-alt', function() {
       inputField.trigger(eKeyup);
       $timeout.flush();
 
-      var eKeydown = $.Event('keydown');
       eKeydown.which = KEY_DW;
       inputField.trigger(eKeydown);
       expect(element.isolateScope().currentIndex).toBe(0);
 
-      var eKeydown = $.Event('keydown');
       eKeydown.which = KEY_EN;
       inputField.trigger(eKeydown);
 
