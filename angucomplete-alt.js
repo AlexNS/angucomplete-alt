@@ -1,6 +1,8 @@
 /*
  * angucomplete-alt
  * Autocomplete directive for AngularJS
+ * This is a re-fork of Hidenari Nozaki (https://github.com/ghiden) with some extra features.
+ * Which adds the apply on Enter callback. 
  * This is a fork of Daryl Rowland's angucomplete with some extra features.
  * By Hidenari Nozaki
  */
@@ -99,7 +101,8 @@
         inputChanged: '=',
         autoMatch: '@',
         focusOut: '&',
-        focusIn: '&'
+        focusIn: '&',
+        enterApplyCallback: '='
       },
       templateUrl: function(element, attrs) {
         return attrs.templateUrl || TEMPLATE_URL;
@@ -237,6 +240,12 @@
 
           if (which === KEY_UP || which === KEY_EN) {
             event.preventDefault();
+            if (which === KEY_EN){
+              if (typeof (scope.enterApplyCallback) === 'function'
+                  && scope.selectedObject != null){
+                scope.enterApplyCallback(scope.selectedObject);
+              }
+            }
           }
           else if (which === KEY_DW) {
             event.preventDefault();
@@ -677,7 +686,6 @@
         // set strings for "Searching..." and "No results"
         scope.textSearching = attrs.textSearching ? attrs.textSearching : TEXT_SEARCHING;
         scope.textNoResults = attrs.textNoResults ? attrs.textNoResults : TEXT_NORESULTS;
-        
         // set max length (default to maxlength deault from html
         scope.maxlength = attrs.maxlength ? attrs.maxlength : MAX_LENGTH;
 

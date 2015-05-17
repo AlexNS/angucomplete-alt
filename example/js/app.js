@@ -10,6 +10,13 @@ app.controller('MainController', ['$scope', '$http',
       window.alert('You have selected ' + selected.title);
     };
 
+    $scope.enterApply = function(selected) {
+      if (typeof (selected.title) == 'undefined')
+        window.alert('You pressed enter on the entered text: ' + selected.originalObject);
+      else
+        window.alert('You pressed enter on the item: ' + selected.title);
+    };
+
     $scope.people = [
       {firstName: "Daryl", surname: "Rowland", twitter: "@darylrowland", pic: "img/daryl.jpeg"},
       {firstName: "Alan", surname: "Partridge", twitter: "@alangpartridge", pic: "img/alanp.jpg"},

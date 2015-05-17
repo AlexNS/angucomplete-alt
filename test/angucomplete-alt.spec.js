@@ -35,7 +35,7 @@ describe('angucomplete-alt', function() {
       $scope.$digest();
       expect(element.find('#ex1_value').attr('placeholder')).toEqual('Search countries');
     });
-      
+
     it('should render maxlength string', function() {
       var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="selectedCountry" local-data="countries" search-fields="name" title-field="name" maxlength="25" />');
       $scope.selectedCountry = null;
@@ -1168,6 +1168,152 @@ describe('angucomplete-alt', function() {
       inputField.trigger(eKeyup);
       expect(element.find('.angucomplete-row').length).toBe(3);
     });
+
+    it('should call callback when Enter pressed on non existing item (with override suggestions)', function() {
+      var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" enter-apply-callback="enterApply" selected-object="countrySelected" local-data="countries" search-fields="name" title-field="name" minlength="1" override-suggestions="true"/>');
+      $scope.countrySelected = null;
+      $scope.enterApply = jasmine.createSpy('enterApply');
+      $scope.countries = [
+        {name: 'Afghanistan', code: 'AF'},
+        {name: 'Aland Islands', code: 'AX'},
+        {name: 'Albania', code: 'AL'}
+      ];
+      $compile(element)($scope);
+      $scope.$digest();
+
+      var inputField = element.find('#ex1_value');
+      var eKeyup = $.Event('keyup');
+      eKeyup.which = 97; // letter: a
+
+      inputField.val('a');
+      inputField.trigger('input');
+      inputField.trigger(eKeyup);
+      $timeout.flush();
+
+      var eKeydown = $.Event('keydown');
+      eKeydown.which = KEY_EN;
+      inputField.trigger(eKeydown);
+
+      eKeyup.which = KEY_EN;
+      inputField.trigger(eKeyup);
+
+      expect($scope.enterApply).toHaveBeenCalledWith($scope.countrySelected);
+      expect($scope.countrySelected.originalObject).toBe('a');
+    });
+
+    it('should not call callback when Enter pressed for not existing element (without override suggestions)', function() {
+      var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" enter-apply-callback="enterApply" selected-object="countrySelected" local-data="countries" search-fields="name" title-field="name" minlength="1"/>');
+      $scope.countrySelected = null;
+      $scope.enterApply = jasmine.createSpy('enterApply');
+      $scope.countries = [
+        {name: 'Afghanistan', code: 'AF'},
+        {name: 'Aland Islands', code: 'AX'},
+        {name: 'Albania', code: 'AL'}
+      ];
+      $compile(element)($scope);
+      $scope.$digest();
+
+      var inputField = element.find('#ex1_value');
+      var eKeyup = $.Event('keyup');
+      eKeyup.which = 97; // letter: a
+
+      inputField.val('a');
+      inputField.trigger('input');
+      inputField.trigger(eKeyup);
+      $timeout.flush();
+
+      var eKeydown = $.Event('keydown');
+      eKeydown.which = KEY_EN;
+      inputField.trigger(eKeydown);
+
+      eKeyup.which = KEY_EN;
+      inputField.trigger(eKeyup);
+
+      expect($scope.enterApply).not.toHaveBeenCalled();
+    });
+
+    it('should call callback when Enter pressed for selected item', function() {
+      var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" enter-apply-callback="enterApply" selected-object="countrySelected" local-data="countries" search-fields="name" title-field="name" minlength="1"/>');
+      $scope.countrySelected = null;
+      $scope.enterApply = jasmine.createSpy('enterApply');
+      $scope.countries = [
+        {name: 'Afghanistan', code: 'AF'},
+        {name: 'Aland Islands', code: 'AX'},
+        {name: 'Albania', code: 'AL'}
+      ];
+      $compile(element)($scope);
+      $scope.$digest();
+
+      var inputField = element.find('#ex1_value');
+      var eKeyup = $.Event('keyup');
+      var eKeydown = $.Event('keydown');
+
+      eKeyup.which = 97; // letter: a
+
+      inputField.val('a');
+      inputField.trigger('input');
+      inputField.trigger(eKeyup);
+      $timeout.flush();
+
+      var eKeydown = $.Event('keydown');
+      eKeydown.which = KEY_DW;
+      inputField.trigger(eKeydown);
+      expect(element.isolateScope().currentIndex).toBe(0);
+
+      eKeydown.which = KEY_TAB;
+      inputField.trigger(eKeydown);
+      $scope.$digest();
+
+      expect($scope.countrySelected).not.toBe(null);
+
+      var eKeydown = $.Event('keydown');
+      eKeydown.which = KEY_EN;
+      inputField.trigger(eKeydown);
+
+      eKeyup.which = KEY_EN;
+      inputField.trigger(eKeyup);
+
+      expect($scope.enterApply).toHaveBeenCalledWith($scope.countrySelected);
+    });
+
+    it('should call callback when Enter pressed for highlighted item', function() {
+      var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" enter-apply-callback="enterApply" selected-object="countrySelected" local-data="countries" search-fields="name" title-field="name" minlength="1"/>');
+      $scope.countrySelected = null;
+      $scope.enterApply = jasmine.createSpy('enterApply');
+      $scope.countries = [
+        {name: 'Afghanistan', code: 'AF'},
+        {name: 'Aland Islands', code: 'AX'},
+        {name: 'Albania', code: 'AL'}
+      ];
+      $compile(element)($scope);
+      $scope.$digest();
+
+      var inputField = element.find('#ex1_value');
+      var eKeyup = $.Event('keyup');
+      var eKeydown = $.Event('keydown');
+
+      eKeyup.which = 97; // letter: a
+
+      inputField.val('a');
+      inputField.trigger('input');
+      inputField.trigger(eKeyup);
+      $timeout.flush();
+
+      var eKeydown = $.Event('keydown');
+      eKeydown.which = KEY_DW;
+      inputField.trigger(eKeydown);
+      expect(element.isolateScope().currentIndex).toBe(0);
+
+      var eKeydown = $.Event('keydown');
+      eKeydown.which = KEY_EN;
+      inputField.trigger(eKeydown);
+
+      eKeyup.which = KEY_EN;
+      inputField.trigger(eKeyup);
+      expect($scope.countrySelected).not.toBe(null);
+      expect($scope.enterApply).toHaveBeenCalledWith($scope.countrySelected);
+    });
+
   });
 
   describe('Clear input', function() {
